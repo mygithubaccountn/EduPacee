@@ -1,0 +1,116 @@
+{% extends 'edupace_app/base.html' %}
+
+{% block title %}Academic Board Dashboard - EduPace{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">
+                    <i class="bi bi-shield-check"></i> Academic Board Dashboard
+                </h2>
+                <a href="{% url 'edupace_app:create_course' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-circle"></i> Create New Course
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h5 class="card-title text-primary">
+                        <i class="bi bi-book"></i> Total Courses
+                    </h5>
+                    <h2 class="text-primary">{{ total_courses }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h5 class="card-title text-danger">
+                        <i class="bi bi-lock"></i> Locked Courses
+                    </h5>
+                    <h2 class="text-danger">{{ locked_courses }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <h5 class="card-title text-success">
+                        <i class="bi bi-unlock"></i> Active Courses
+                    </h5>
+                    <h2 class="text-success">{{ active_courses }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-list-ul"></i> All Courses</h5>
+                </div>
+                <div class="card-body">
+                    {% if courses %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Course Code</th>
+                                    <th>Course Name</th>
+                                    <th>Credits</th>
+                                    <th>Status</th>
+                                    <th>Teachers</th>
+                                    <th>Students</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for course in courses %}
+                                <tr>
+                                    <td><strong>{{ course.code }}</strong></td>
+                                    <td>{{ course.name }}</td>
+                                    <td>{{ course.credits }}</td>
+                                    <td>
+                                        {% if course.is_locked %}
+                                            <span class="badge bg-danger">Locked</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Active</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ course.teachers.count }}</td>
+                                    <td>{{ course.students.count }}</td>
+                                    <td>
+                                        <a href="{% url 'edupace_app:academic_board_course_detail' course.id %}" class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                        {% if not course.is_locked %}
+                                        <a href="{% url 'edupace_app:edit_course' course.id %}" class="btn btn-sm btn-warning">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No courses created yet.</p>
+                    <a href="{% url 'edupace_app:create_course' %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Create First Course
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

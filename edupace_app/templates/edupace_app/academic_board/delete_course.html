@@ -1,0 +1,45 @@
+{% extends 'edupace_app/base.html' %}
+
+{% block title %}Delete Course - {{ course.code }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Delete Course
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>Are you sure you want to delete the following course?</p>
+                    <div class="alert alert-danger">
+                        <strong>{{ course.code }} - {{ course.name }}</strong>
+                    </div>
+                    <p class="text-danger"><strong>Warning:</strong> This will also delete:</p>
+                    <ul>
+                        <li>All program outcomes</li>
+                        <li>All learning outcomes</li>
+                        <li>All grades</li>
+                    </ul>
+                    <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'edupace_app:academic_board_course_detail' course.id %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete Course
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

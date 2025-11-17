@@ -1,0 +1,231 @@
+{% extends 'edupace_app/base.html' %}
+
+{% block title %}{{ course.code }} - Academic Board View{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'edupace_app:academic_board_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">{{ course.code }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="bi bi-book"></i> {{ course.code }} - {{ course.name }}
+                    </h4>
+                    <div>
+                        {% if can_edit %}
+                        <a href="{% url 'edupace_app:edit_course' course.id %}" class="btn btn-sm btn-warning">
+                            <i class="bi bi-pencil"></i> Edit Course
+                        </a>
+                        <a href="{% url 'edupace_app:delete_course' course.id %}" class="btn btn-sm btn-danger">
+                            <i class="bi bi-trash"></i> Delete
+                        </a>
+                        {% else %}
+                        <span class="badge bg-danger">Course Locked</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p><strong>Description:</strong> {{ course.description|default:"No description available." }}</p>
+                    <p><strong>Credits:</strong> {{ course.credits }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if course.is_locked %}
+                            <span class="badge bg-danger">Locked</span>
+                        {% else %}
+                            <span class="badge bg-success">Active</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-list-check"></i> Program Outcomes</h5>
+                    {% if can_edit %}
+                    <a href="{% url 'edupace_app:add_program_outcome' course.id %}" class="btn btn-sm btn-light">
+                        <i class="bi bi-plus-circle"></i> Add
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if program_outcomes %}
+                    <ul class="list-group">
+                        {% for po in program_outcomes %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ po.code }}:</strong> {{ po.description }}
+                            </div>
+                            {% if can_edit %}
+                            <div>
+                                <a href="{% url 'edupace_app:edit_program_outcome' po.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <a href="{% url 'edupace_app:delete_program_outcome' po.id %}" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No program outcomes defined yet.</p>
+                    {% if can_edit %}
+                    <a href="{% url 'edupace_app:add_program_outcome' course.id %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Add First Program Outcome
+                    </a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-list-task"></i> Learning Outcomes</h5>
+                </div>
+                <div class="card-body">
+                    {% if learning_outcomes %}
+                    <ul class="list-group">
+                        {% for lo in learning_outcomes %}
+                        <li class="list-group-item">
+                            <strong>{{ lo.code }}:</strong> {{ lo.description }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No learning outcomes defined yet. Teachers can add them.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-dark d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-person-badge"></i> Assigned Teachers</h5>
+                    {% if can_edit %}
+                    <a href="{% url 'edupace_app:assign_teacher_to_course' course.id %}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-circle"></i> Assign
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if teachers %}
+                    <ul class="list-group">
+                        {% for teacher in teachers %}
+                        <li class="list-group-item">
+                            {{ teacher.user.get_full_name|default:teacher.user.username }} ({{ teacher.employee_id }})
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No teachers assigned yet.</p>
+                    {% if can_edit %}
+                    <a href="{% url 'edupace_app:assign_teacher_to_course' course.id %}" class="btn btn-primary">
+                        <i class="bi bi-plus-circle"></i> Assign Teacher
+                    </a>
+                    {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> Enrolled Students</h5>
+                </div>
+                <div class="card-body">
+                    {% if students %}
+                    <p><strong>Total:</strong> {{ students.count }} students</p>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student in students|slice:":10" %}
+                                <tr>
+                                    <td>{{ student.student_id }}</td>
+                                    <td>{{ student.user.get_full_name|default:student.user.username }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% if students.count > 10 %}
+                    <p class="text-muted small">Showing first 10 of {{ students.count }} students</p>
+                    {% endif %}
+                    {% else %}
+                    <p class="text-muted">No students enrolled yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-data"></i> Grades Overview</h5>
+                </div>
+                <div class="card-body">
+                    {% if grades %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student ID</th>
+                                    <th>Student Name</th>
+                                    <th>Grade</th>
+                                    <th>Percentage</th>
+                                    <th>Semester</th>
+                                    <th>Academic Year</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for grade in grades %}
+                                <tr>
+                                    <td>{{ grade.student.student_id }}</td>
+                                    <td>{{ grade.student.user.get_full_name|default:grade.student.user.username }}</td>
+                                    <td><span class="badge bg-success">{{ grade.grade }}</span></td>
+                                    <td>{{ grade.percentage|default:"-" }}</td>
+                                    <td>{{ grade.semester|default:"-" }}</td>
+                                    <td>{{ grade.academic_year|default:"-" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No grades uploaded yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

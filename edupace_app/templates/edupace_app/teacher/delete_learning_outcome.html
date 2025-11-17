@@ -1,0 +1,39 @@
+{% extends 'edupace_app/base.html' %}
+
+{% block title %}Delete Learning Outcome - {{ learning_outcome.code }}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-exclamation-triangle"></i> Delete Learning Outcome
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <p>Are you sure you want to delete the following learning outcome?</p>
+                    <div class="alert alert-info">
+                        <strong>{{ learning_outcome.code }}:</strong> {{ learning_outcome.description }}
+                    </div>
+                    <p class="text-danger"><strong>This action cannot be undone.</strong></p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'edupace_app:teacher_course_detail' course.id %}" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Cancel
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

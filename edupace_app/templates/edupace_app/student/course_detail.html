@@ -1,0 +1,101 @@
+{% extends 'edupace_app/base.html' %}
+
+{% block title %}{{ course.code }} - Student View{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'edupace_app:student_dashboard' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item active">{{ course.code }}</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-book"></i> {{ course.code }} - {{ course.name }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <p><strong>Description:</strong> {{ course.description|default:"No description available." }}</p>
+                    <p><strong>Credits:</strong> {{ course.credits }}</p>
+                    
+                    {% if grade %}
+                    <div class="alert alert-info mt-3">
+                        <h5><i class="bi bi-trophy"></i> Your Grade</h5>
+                        <p class="mb-0">
+                            <strong>Grade:</strong> <span class="badge bg-success fs-6">{{ grade.grade }}</span>
+                            {% if grade.percentage %}
+                            <strong class="ms-3">Percentage:</strong> {{ grade.percentage }}%
+                            {% endif %}
+                            {% if grade.semester %}
+                            <strong class="ms-3">Semester:</strong> {{ grade.semester }}
+                            {% endif %}
+                            {% if grade.academic_year %}
+                            <strong class="ms-3">Academic Year:</strong> {{ grade.academic_year }}
+                            {% endif %}
+                        </p>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning mt-3">
+                        <i class="bi bi-info-circle"></i> No grade available for this course yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-list-check"></i> Program Outcomes</h5>
+                </div>
+                <div class="card-body">
+                    {% if program_outcomes %}
+                    <ul class="list-group">
+                        {% for po in program_outcomes %}
+                        <li class="list-group-item">
+                            <strong>{{ po.code }}:</strong> {{ po.description }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No program outcomes defined for this course.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-list-task"></i> Learning Outcomes</h5>
+                </div>
+                <div class="card-body">
+                    {% if learning_outcomes %}
+                    <ul class="list-group">
+                        {% for lo in learning_outcomes %}
+                        <li class="list-group-item">
+                            <strong>{{ lo.code }}:</strong> {{ lo.description }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No learning outcomes defined for this course yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
